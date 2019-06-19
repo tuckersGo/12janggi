@@ -52,8 +52,10 @@ func update(screen *ebiten.Image) error {
 
 		if i >= 0 && i < GridWidth && j >= 0 && j < GridHeight {
 			if !selected {
-				selected = true
-				selectedX, selectedY = i, j
+				if board[i][j] != GimulNone {
+					selected = true
+					selectedX, selectedY = i, j
+				}
 			} else {
 				if selectedX == i && selectedY == j {
 					selected = false
@@ -72,7 +74,6 @@ func update(screen *ebiten.Image) error {
 
 			// The previous empty option struct
 			opts := &ebiten.DrawImageOptions{}
-
 			// Add the Translate effect to the option struct.
 			opts.GeoM.Translate(float64(GimulStartX+GridWidth*i), float64(GimulStartY+GridHeight*j))
 
@@ -100,7 +101,6 @@ func update(screen *ebiten.Image) error {
 	if selected {
 		// The previous empty option struct
 		opts := &ebiten.DrawImageOptions{}
-
 		// Add the Translate effect to the option struct.
 		opts.GeoM.Translate(float64(GimulStartX+GridWidth*selectedX), float64(GimulStartY+GridHeight*selectedY))
 		screen.DrawImage(selectedImg, opts)
@@ -129,7 +129,7 @@ func isMovable(prevX, prevY, tarX, tarY int) bool {
 	case GimulRedJa:
 		return prevY == tarY && prevX-1 == tarX
 	case GimulGreenJang, GimulRedJang:
-		return (abs(prevX-tarX) == 1 && prevY == tarY) || (abs(prevY-tarY) == 1 && prevX == tarX)
+		return abs(prevX-tarX)+abs(prevY-tarY) == 1
 	case GimulGreenSang, GimulRedSang:
 		return (abs(prevX-tarX) == 1 && abs(prevY-tarY) == 1)
 	case GimulGreenWang, GimulRedWang:
